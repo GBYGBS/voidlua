@@ -5,9 +5,12 @@ local json = require 'json'
 local base64 = require 'gamesense/base64'
 local c_entity = require 'gamesense/entity'
 local weapons = require 'gamesense/csgo_weapons'
-local client_latency, client_screen_size, client_set_event_callback, client_system_time, entity_get_local_player, entity_get_player_resource, entity_get_prop, globals_absoluteframetime, globals_tickinterval, math_ceil, math_floor, math_min, math_sqrt, renderer_measure_text, ui_reference, pcall, renderer_gradient, renderer_rectangle, renderer_text, string_format, table_insert, ui_get, ui_new_checkbox, ui_new_color_picker, ui_new_multiselect, ui_new_textbox, ui_set, ui_set_callback, ui_set_visible = client.latency, client.screen_size, client.set_event_callback, client.system_time, entity.get_local_player, entity.get_player_resource, entity.get_prop, globals.absoluteframetime, globals.tickinterval, math.ceil, math.floor, math.min, math.sqrt, renderer.measure_text, ui.reference, pcall, renderer.gradient, renderer.rectangle, renderer.text, string.format, table.insert, ui.get, ui.new_checkbox, ui.new_color_picker, ui.new_multiselect, ui.new_textbox, ui.set, ui.set_callback, ui.set_visible
+local client_latency, client_screen_size, client_set_event_callback, client_system_time, entity_get_local_player, entity_get_player_resource, entity_get_prop, globals_absoluteframetime, globals_tickinterval, math_ceil, math_floor, math_min, math_sqrt, renderer_measure_text, ui_reference, pcall, renderer_gradient, renderer_rectangle, renderer_text, string_format, table_insert, ui_get, ui_new_checkbox, ui_new_color_picker, ui_new_multiselect, ui_new_textbox, ui_set, ui_set_callback, ui_set_visible, ui_new_label, ui_new_button, ui_new_slider, ui_new_combobox, ui_new_hotkey, renderer_line, table_concat, math_abs = client.latency, client.screen_size, client.set_event_callback, client.system_time, entity.get_local_player, entity.get_player_resource, entity.get_prop, globals.absoluteframetime, globals.tickinterval, math_ceil, math_floor, math_min, math_sqrt, renderer.measure_text, ui.reference, pcall, renderer.gradient, renderer.rectangle, renderer.text, string_format, table.insert, ui.get, ui.new_checkbox, ui.new_color_picker, ui.new_multiselect, ui.new_textbox, ui.set, ui.set_callback, ui.set_visible, ui.new_label, ui.new_button, ui.new_slider, ui.new_combobox, ui.new_hotkey, renderer.line, table_concat, math_abs
 local ffi = require 'ffi'
 local pui = require("gamesense/pui")
+local cvar = require 'gamesense/cvar'
+local plist = require 'gamesense/plist'
+local bit = require 'bit'
 ---@end
 
 ---@ref_start
@@ -164,7 +167,7 @@ entity.get_animlayer = function(idx, layer_idx)
 end
 
 entity.get_max_desync = function(ent)
-    local ways = math.clamp(ent.feet_speed_forwards_or_sideways, 0, 1)
+    local ways = math_clamp(ent.feet_speed_forwards_or_sideways, 0, 1)
     local frac = (ent.stop_to_full_running_fraction * -0.3 - 0.2) * ways + 1
     local ducking = ent.duck_amount
 
@@ -172,33 +175,33 @@ entity.get_max_desync = function(ent)
         frac = frac + ducking * ways * (0.5 - frac)
     end
 
-    return math.clamp(frac, 0.5, 1)
+    return math_clamp(frac, 0.5, 1)
 end
 
 -- Additional math functions if not present
-math.clamp = function(value, min, max)
+math_clamp = function(value, min, max)
     return value < min and min or (value > max and max or value)
 end
 
-math.vec_length2d = function(vec)
-    return math.sqrt(vec.x * vec.x + vec.y * vec.y)
+math_vec_length2d = function(vec)
+    return math_sqrt(vec.x * vec.x + vec.y * vec.y)
 end
 
-math.angle_normalize = function(angle)
+math_angle_normalize = function(angle)
     return (angle % 360 + 360) % 360
 end
 
-math.angle_diff = function(dest, src)
+math_angle_diff = function(dest, src)
     local delta = (dest - src + 540) % 360 - 180
     return delta
 end
 
-math.approach_angle = function(target, value, speed)
-    target = math.angle_normalize(target)
-    value = math.angle_normalize(value)
+math_approach_angle = function(target, value, speed)
+    target = math_angle_normalize(target)
+    value = math_angle_normalize(value)
 
-    local delta = math.angle_diff(target, value)
-    speed = math.abs(speed)
+    local delta = math_angle_diff(target, value)
+    speed = math_abs(speed)
 
     if delta > speed then
         value = value + speed
@@ -208,7 +211,7 @@ math.approach_angle = function(target, value, speed)
         value = target
     end
 
-    return math.angle_normalize(value)
+    return math_angle_normalize(value)
 end
 
 ---@region tools
@@ -217,13 +220,13 @@ local tools = {
         return a + (b - a) * t
     end,
     to_hex = function(r, g, b, a)
-        return string.format("%02x%02x%02x%02x", r, g, b, a)
+        return string_format("%02x%02x%02x%02x", r, g, b, a)
     end,
     clamp = function(value, min, max)
-        return math.max(min, math.min(max, value))
+        return math_max(min, math_min(max, value))
     end,
     time_to_ticks = function(t)
-        return math.floor(0.5 + (t / globals.tickinterval()))
+        return math_floor(0.5 + (t / globals.tickinterval()))
     end
 }
 
@@ -247,7 +250,7 @@ local function get_enemies_filtered()
             if entity.is_alive(ent) then
                 local ent_pos = { entity.get_origin(ent) }
                 if ent_pos[1] then
-                    local distance = math.sqrt((ent_pos[1] - my_pos[1])^2 + (ent_pos[2] - my_pos[2])^2 + (ent_pos[3] - my_pos[3])^2)
+                    local distance = math_sqrt((ent_pos[1] - my_pos[1])^2 + (ent_pos[2] - my_pos[2])^2 + (ent_pos[3] - my_pos[3])^2)
                     if distance < 4000 then
                         table.insert(filtered, ent)
                     end
@@ -292,7 +295,7 @@ local function on_load()
     end
 end
 
-local function on_unload()
+function on_unload()
     local skeet_refs = {
         ref.enabled, ref.pitch[1], ref.pitch[2], ref.yaw_base, ref.yaw[1], ref.yaw[2],
         ref.yaw_jitter[1], ref.yaw_jitter[2], ref.body_yaw[1], ref.body_yaw[2],
@@ -600,11 +603,11 @@ aa_visibility()
 local pred_value = { chokedcommands = 1, silent_shift = 1, tickcount = 1 }
 local command_number = 1
 
-local function update_command_number(cmd)
+function update_command_number(cmd)
     command_number = cmd.command_number
 end
 
-local function update_pred_value(cmd)
+function update_pred_value(cmd)
     pred_value.chokedcommands = cmd.chokedcommands
     pred_value.silent_shift = cvar.sv_maxusrcmdprocessticks:get_float() - pred_value.chokedcommands - 1
     pred_value.tickcount = globals.tickcount()
@@ -614,10 +617,10 @@ local jitter_switch, delay_timer = false, 0
 
 local function delayjitter(switchyaw1, switchyaw2, speed, yawrandom)
     speed = speed + 1
-    local random_left  = math.random(0, switchyaw1 * yawrandom / 100)
-    local random_right = math.random(0, switchyaw2 * yawrandom / 100)
+    local random_left  = math_random(0, switchyaw1 * yawrandom / 100)
+    local random_right = math_random(0, switchyaw2 * yawrandom / 100)
 
-    if globals.chokedcommands() == 0 and (command_number % 2 >= math.abs(math.sin(globals.chokedcommands()))) then
+    if globals.chokedcommands() == 0 and (command_number % 2 >= math_abs(math_sin, math_rad, math_cos, math_atan, math_deg, math_pi, math_max, math_min, math_random, math_clamp, math_vec_length2d, math_angle_normalize, math_angle_diff, math_approach_angle(globals.chokedcommands()))) then
         delay_timer = delay_timer + 1
         if delay_timer % speed == 0 then
             jitter_switch = not jitter_switch
@@ -638,7 +641,15 @@ local function get_player_state(cmd)
     local vecvelocity = { entity.get_prop(lp, 'm_vecVelocity') }
     local flags = entity.get_prop(lp, 'm_fFlags')
     local absvelocity = { entity.get_prop(lp, "m_vecAbsVelocity") }
-    local velocity = math.sqrt((absvelocity[1] or 0)^2 + (absvelocity[2] or 0)^2)
+    local velocity = 0
+    if type(absvelocity) == "table" and absvelocity[1] and absvelocity[2] then
+        velocity = math_sqrt((absvelocity[1] or 0)^2 + (absvelocity[2] or 0)^2)
+    elseif type(absvelocity) == "number" then
+        velocity = math_abs(absvelocity)
+    else
+        -- Fallback to regular velocity if absvelocity is not available
+        velocity = math_sqrt((vecvelocity[1] or 0)^2 + (vecvelocity[2] or 0)^2)
+    end
     local in_grounded = bit.band(flags, 1) == 1
     local jump = bit.band(flags, 1) == 0 or cmd.in_jump == 1
     local ducked = entity.get_prop(lp, 'm_flDuckAmount') > 0.7
@@ -672,7 +683,7 @@ local defensive_system = {
     is_defensive = false
 }
 
-local function defensiveCheck(cmd)
+function defensiveCheck(cmd)
 
     local lp = entity.get_local_player()
     if not lp or not entity.is_alive(lp) then return end
@@ -681,14 +692,14 @@ local function defensiveCheck(cmd)
     local tick_base = entity.get_prop(lp, "m_nTickBase") or 0
     local can_exploit = current_tick > tick_base
 
-    if math.abs(tick_base - defensive_system.max_tick_base) > 64 and can_exploit then
+    if math_abs(tick_base - defensive_system.max_tick_base) > 64 and can_exploit then
         defensive_system.max_tick_base = 0
     end
 
     if tick_base > defensive_system.max_tick_base then
         defensive_system.max_tick_base = tick_base
     elseif defensive_system.max_tick_base > tick_base then
-        defensive_system.ticks_count = can_exploit and math.min(14, math.max(0, defensive_system.max_tick_base - tick_base - 1)) or 0
+        defensive_system.ticks_count = can_exploit and math_min(14, math_max(0, defensive_system.max_tick_base - tick_base - 1)) or 0
     end
 
     defensive_system.is_defensive = (defensive_system.ticks_count > 2
@@ -701,7 +712,7 @@ local defensive_data = {
 }
 
 local current_tick = tools.time_to_ticks(globals.realtime())
-local function on_setup_command(cmd)
+function on_setup_command(cmd)
     cmd.allow_send_packet = true
     ui_set_smart(ref.enabled, true)
     ui_set_smart(ref.yaw_base, "At Targets")
@@ -726,7 +737,7 @@ local function on_setup_command(cmd)
     local yaw_d       = ui.get(settings.yaw_d)
     local yaw_rd      = ui.get(settings.yaw_rd)
     local yaw_rds     = ui.get(settings.yaw_rds)
-    local delay_total = yaw_rd and (yaw_d + math.random(0, yaw_rds)) or yaw_d
+    local delay_total = yaw_rd and (yaw_d + math_random(0, yaw_rds)) or yaw_d
     local switch_ticks = tools.time_to_ticks(globals.realtime() - current_tick)
     local switch
 
@@ -884,7 +895,7 @@ end
 ---@end
 
 ---@freestand
-local function freestanding()    
+function freestanding()    
     if ui.get(lua_menu.discloser.freestand) then
         ui_set_smart(ref.freestand[1], true)   
         ui_set_smart(ref.freestand[2], "Always On")
@@ -896,7 +907,7 @@ end
 ---@end
 
 ---@safehead
-local function safehead(cmd)
+function safehead(cmd)
     if not ui.get(lua_menu.discloser.safehead) then
         return
     end
@@ -920,7 +931,7 @@ local function safehead(cmd)
                     ui.set(ref.yaw[1], "180")
                     ui.set(ref.yaw[2], -180)
                     ui.set(ref.pitch[1], "Custom")
-                    ui.set(ref.pitch[2], math.random(-2, 2))
+                    ui.set(ref.pitch[2], math_random(-2, 2))
                 end
             end
         end
@@ -938,7 +949,7 @@ local yawDirectionMapping = {
     { keyFunc = function() return ui.get(lua_menu.discloser.forward) end, value = -180 }
 }
 
-local function manual_yaw()
+function manual_yaw()
     local curtime = globals.curtime()
     
     for _, mapping in ipairs(yawDirectionMapping) do
@@ -972,7 +983,7 @@ local manual_arrow_cache = {
     cached_positions = {}
 }
 
-local function render_manual()
+function render_manual()
     local screenW, screenH = client.screen_size()
     local centerX, centerY = screenW / 2, screenH / 2
     local lp = entity.get_local_player()
@@ -1057,15 +1068,15 @@ local function render_manual()
 
     if yaw_direction == -90 or yaw_direction == 90 then
         if pos.tipX and pos.topX and pos.bottomX then
-            renderer.line(pos.tipX, pos.tipY, pos.topX, pos.topY, r, g, b, a)
-            renderer.line(pos.topX, pos.topY, pos.bottomX, pos.bottomY, r, g, b, a)
-            renderer.line(pos.bottomX, pos.bottomY, pos.tipX, pos.tipY, r, g, b, a)
+            renderer_line(pos.tipX, pos.tipY, pos.topX, pos.topY, r, g, b, a)
+            renderer_line(pos.topX, pos.topY, pos.bottomX, pos.bottomY, r, g, b, a)
+            renderer_line(pos.bottomX, pos.bottomY, pos.tipX, pos.tipY, r, g, b, a)
         end
     elseif yaw_direction == -180 or yaw_direction == 180 then
         if pos.tipX and pos.leftX and pos.rightX then
-            renderer.line(pos.tipX, pos.tipY, pos.leftX, pos.leftY, r, g, b, a)
-            renderer.line(pos.leftX, pos.leftY, pos.rightX, pos.rightY, r, g, b, a)
-            renderer.line(pos.rightX, pos.rightY, pos.tipX, pos.tipY, r, g, b, a)
+            renderer_line(pos.tipX, pos.tipY, pos.leftX, pos.leftY, r, g, b, a)
+            renderer_line(pos.leftX, pos.leftY, pos.rightX, pos.rightY, r, g, b, a)
+            renderer_line(pos.rightX, pos.rightY, pos.tipX, pos.tipY, r, g, b, a)
         end
     end
 end
@@ -1135,14 +1146,14 @@ end
 
     if yaw_direction == -90 or yaw_direction == 90 then
         -- Left or Right arrow
-        renderer.line(pos.tipX, pos.tipY, pos.topX, pos.topY, r, g, b, a)
-        renderer.line(pos.topX, pos.topY, pos.bottomX, pos.bottomY, r, g, b, a)
-        renderer.line(pos.bottomX, pos.bottomY, pos.tipX, pos.tipY, r, g, b, a)
+        renderer_line(pos.tipX, pos.tipY, pos.topX, pos.topY, r, g, b, a)
+        renderer_line(pos.topX, pos.topY, pos.bottomX, pos.bottomY, r, g, b, a)
+        renderer_line(pos.bottomX, pos.bottomY, pos.tipX, pos.tipY, r, g, b, a)
     elseif yaw_direction == -180 then
         -- Forward arrow (up)
-        renderer.line(pos.tipX, pos.tipY, pos.leftX, pos.leftY, r, g, b, a)
-        renderer.line(pos.leftX, pos.leftY, pos.rightX, pos.rightY, r, g, b, a)
-        renderer.line(pos.rightX, pos.rightY, pos.tipX, pos.tipY, r, g, b, a)
+        renderer_line(pos.tipX, pos.tipY, pos.leftX, pos.leftY, r, g, b, a)
+        renderer_line(pos.leftX, pos.leftY, pos.rightX, pos.rightY, r, g, b, a)
+        renderer_line(pos.rightX, pos.rightY, pos.tipX, pos.tipY, r, g, b, a)
     end
 ---@end
 
@@ -1152,10 +1163,10 @@ local last_step = -1
 local frame_interval = 16
 local last_sent_tag = ""
 
-local function clantag()
+function clantag()
     local enabled = ui.get(lua_menu.checkboxes.clantag)
     local server_tick = globals.tickcount()
-    local current_step = math.floor(server_tick / frame_interval)
+    local current_step = math_floor(server_tick / frame_interval)
 
     if not enabled then
         if last_step ~= -1 then
@@ -1297,7 +1308,7 @@ classnames = {
 "CFuncBrush"
 }
 local function distance3d(x1, y1, z1, x2, y2, z2)
-	return math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1))
+	return math_sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1))
 end
 
 local function entity_has_c4(ent)
@@ -1305,7 +1316,7 @@ local function entity_has_c4(ent)
 	return bomb ~= nil and entity.get_prop(bomb, "m_hOwnerEntity") == ent
 end
 
-local function aa_on_use(cmd)
+function aa_on_use(cmd)
 	if ui.get(lua_menu.discloser.legit_aa) then
         if cmd.in_use == 1 then
             ui.set(ref.pitch[1], "Off")
@@ -1341,10 +1352,10 @@ local function aa_on_use(cmd)
 		local px, py, pz = client.eye_position()
 		local pitch, yaw = client.camera_angles()
 	
-    local sin_pitch = math.sin(math.rad(pitch))
-    local cos_pitch = math.cos(math.rad(pitch))
-    local sin_yaw = math.sin(math.rad(yaw))
-    local cos_yaw = math.cos(math.rad(yaw))
+    local sin_pitch = math_sin, math_rad, math_cos, math_atan, math_deg, math_pi, math_max, math_min, math_random, math_clamp, math_vec_length2d, math_angle_normalize, math_angle_diff, math_approach_angle(math_rad(pitch))
+    local cos_pitch = math_cos(math_rad(pitch))
+    local sin_yaw = math_sin, math_rad, math_cos, math_atan, math_deg, math_pi, math_max, math_min, math_random, math_clamp, math_vec_length2d, math_angle_normalize, math_angle_diff, math_approach_angle(math_rad(yaw))
+    local cos_yaw = math_cos(math_rad(yaw))
 
 		local dir_vec = { cos_pitch * cos_yaw, cos_pitch * sin_yaw, -sin_pitch }
 
@@ -1418,10 +1429,10 @@ local function draw_status(player, status)
 		color = {50, 205, 50}
 	end
 
-	renderer.text(x_center, y_position, color[1], color[2], color[3], 255, "cb", 0, status)
+	renderer_text(x_center, y_position, color[1], color[2], color[3], 255, "cb", 0, status)
 end
 
-local function rev_helper()
+function rev_helper()
     if not ui.get(lua_menu.checkboxes.revolver_helper) then return end
    
     local lp = entity.get_local_player()
@@ -1445,14 +1456,14 @@ local function rev_helper()
         local ent = players[i]
         local ent_pos = { entity.get_origin(ent) }
         if ent_pos[1] then
-            local dist = math.sqrt((ent_pos[1] - lp_pos[1])^2 + (ent_pos[2] - lp_pos[2])^2 + (ent_pos[3] - lp_pos[3])^2)
+            local dist = math_sqrt((ent_pos[1] - lp_pos[1])^2 + (ent_pos[2] - lp_pos[2])^2 + (ent_pos[3] - lp_pos[3])^2)
             table.insert(sorted_players, { ent = ent, dist = dist })
         end
     end
     
     table.sort(sorted_players, function(a, b) return a.dist < b.dist end)
     
-    for i = 1, math.min(3, #sorted_players) do
+    for i = 1, math_min(3, #sorted_players) do
         local entindex = sorted_players[i].ent
         local status = check_revolver_distance3d(lp, entindex)
         if status ~= 0 then
@@ -1464,7 +1475,7 @@ end
 
 ---@region animfix
 
-local function animfix_setup()
+function animfix_setup()
     local animfix_values = ui.get(lua_menu.checkboxes.animfix)
     local self = entity.get_local_player()
     if not self or not entity.is_alive(self) then
@@ -1485,7 +1496,7 @@ local function animfix_setup()
             return
         end
         local x_velocity = entity.get_prop(self, "m_vecVelocity[0]")
-        if math.abs(x_velocity) >= 3 then
+        if math_abs(x_velocity) >= 3 then
             self_anim_overlay.weight = 1
         end
     end
@@ -1502,9 +1513,9 @@ local function animfix_setup()
     end
 
     if contains(animfix_values, "Kangaroo") then
-        entity.set_prop(self, "m_flPoseParameter", math.random(0, 10)/10, 3)
-        entity.set_prop(self, "m_flPoseParameter", math.random(0, 10)/10, 7)
-        entity.set_prop(self, "m_flPoseParameter", math.random(0, 10)/10, 6)
+        entity.set_prop(self, "m_flPoseParameter", math_random(0, 10)/10, 3)
+        entity.set_prop(self, "m_flPoseParameter", math_random(0, 10)/10, 7)
+        entity.set_prop(self, "m_flPoseParameter", math_random(0, 10)/10, 6)
 
     end
 
@@ -1519,7 +1530,7 @@ end
 ---@end
 
 ---@edge yaw
-local function edge_yaw()
+function edge_yaw()
     ui.set(ref.edge_yaw, ui.get(lua_menu.discloser.edge_yaw))
 end
 ---@end
@@ -1570,13 +1581,13 @@ local function get_side(entindex, animlayer)
     if player then
         local velocity = { entity.get_prop(player, "m_vecVelocity") }
         if velocity[1] and velocity[2] then
-            local velocity_length = math.sqrt(velocity[1]^2 + velocity[2]^2)
+            local velocity_length = math_sqrt(velocity[1]^2 + velocity[2]^2)
             if velocity_length > 1 then
-                local move_yaw = math.deg(math.atan(velocity[2], velocity[1]))
+                local move_yaw = math_deg(math_atan(velocity[2], velocity[1]))
                 local eye_yaw = entity.get_prop(entindex, "m_angEyeAngles[1]") or 0
                 local delta = angle_diff(move_yaw, eye_yaw)
                 
-                if math.abs(delta) > 45 then
+                if math_abs(delta) > 45 then
                     return delta > 0 and 1 or -1
                 end
             end
@@ -1613,7 +1624,7 @@ local function process_side(entindex, side)
     return multiplier
 end
 
-local function resolver_reset()
+function resolver_reset()
     for i = 1, 64 do
         plist.set(i, "Force body yaw", false)
         plist.set(i, "Force body yaw value", 0)
@@ -1646,8 +1657,8 @@ local function get_best_targets_by_fov(max_targets)
             local hx, hy, hz = entity.hitbox_position(ent, 0)
             if hx then
                 local dx, dy = hx - eye_x, hy - eye_y
-                local to_yaw = math.deg(math.atan(dy, dx))
-                local dyaw = math.abs(normalize_yaw((to_yaw or 0) - (yaw or 0)))
+                local to_yaw = math_deg(math_atan(dy, dx))
+                local dyaw = math_abs(normalize_yaw((to_yaw or 0) - (yaw or 0)))
                 
                 table.insert(targets, { ent = ent, fov = dyaw })
             end
@@ -1658,7 +1669,7 @@ local function get_best_targets_by_fov(max_targets)
     table.sort(targets, function(a, b) return a.fov < b.fov end)
     
     local result = {}
-    for i = 1, math.min(max_targets, #targets) do
+    for i = 1, math_min(max_targets, #targets) do
         table.insert(result, targets[i].ent)
     end
     
@@ -1710,16 +1721,16 @@ local function resolver_work()
                 local weapon = entity.get_player_weapon(enemy)
                 local weapon_data = weapons(weapon)
                 if weapon_data and weapon_data.max_player_speed then
-                    max_speed = math.max(weapon_data.max_player_speed, 0.001)
+                    max_speed = math_max(weapon_data.max_player_speed, 0.001)
                 end
             end 
 
             -- Calculate movement speeds
             local velocity = { entity.get_prop(player, "m_vecVelocity") }
-            local velocity_length = velocity[1] and math.sqrt(velocity[1]^2 + velocity[2]^2) or 0
+            local velocity_length = velocity[1] and math_sqrt(velocity[1]^2 + velocity[2]^2) or 0
             
-            local running_speed = math.max(velocity_length, 260) / (max_speed * 0.520)
-            local ducking_speed = math.max(velocity_length, 260) / (max_speed * 0.340)
+            local running_speed = math_max(velocity_length, 260) / (max_speed * 0.520)
+            local ducking_speed = math_max(velocity_length, 260) / (max_speed * 0.340)
 
             local server_time = globals.curtime()
             local yaw = animstate.goal_feet_yaw
@@ -1738,14 +1749,14 @@ local function resolver_work()
             -- Calculate target yaw
             if eye_feet_delta <= max_yaw_modifier then
                 if min_yaw_modifier > eye_feet_delta then
-                    yaw = math.abs(min_yaw_modifier) + animstate.eye_angles_y
+                    yaw = math_abs(min_yaw_modifier) + animstate.eye_angles_y
                 end 
             else 
-                yaw = animstate.eye_angles_y - math.abs(max_yaw_modifier)
+                yaw = animstate.eye_angles_y - math_abs(max_yaw_modifier)
             end 
 
             -- Apply movement-based yaw calculation
-            if velocity_length > 0.01 or math.abs(velocity[3] or 0) > 100 then
+            if velocity_length > 0.01 or math_abs(velocity[3] or 0) > 100 then
                 yaw = approach_angle(animstate.eye_angles_y, yaw, ((animstate.stop_to_full_running_fraction * 20) + 30) * animstate.last_client_side_animation_update_time)
             else 
                 yaw = approach_angle(entity.get_prop(enemy, "m_flLowerBodyYawTarget"), yaw, animstate.last_client_side_animation_update_time * 100)
@@ -1766,14 +1777,14 @@ local function resolver_work()
             end
             
             -- Ensure we have a valid desync value - use intelligent detection
-            if desync == 0 or math.abs(desync) < 1 then
+            if desync == 0 or math_abs(desync) < 1 then
                 -- Use velocity-based desync detection
                 local velocity = { entity.get_prop(player, "m_vecVelocity") }
-                local velocity_length = velocity[1] and math.sqrt(velocity[1]^2 + velocity[2]^2) or 0
+                local velocity_length = velocity[1] and math_sqrt(velocity[1]^2 + velocity[2]^2) or 0
                 
                 if velocity_length > 5 then
                     -- Moving - use movement direction for desync
-                    local move_yaw = math.deg(math.atan(velocity[2], velocity[1]))
+                    local move_yaw = math_deg(math_atan(velocity[2], velocity[1]))
                     local eye_yaw = animstate.eye_angles_y
                     local move_delta = angle_diff(move_yaw, eye_yaw)
                     desync = move_delta > 0 and 58 or -58
@@ -1793,9 +1804,9 @@ local function resolver_work()
                 local lby_delta = angle_diff(eye_yaw, lby)
                 
                 -- Determine desync based on LBY delta
-                if math.abs(lby_delta) > 90 then
+                if math_abs(lby_delta) > 90 then
                     desync = lby_delta > 0 and 120 or -120
-                elseif math.abs(lby_delta) > 45 then
+                elseif math_abs(lby_delta) > 45 then
                     desync = lby_delta > 0 and 90 or -90
                 else
                     desync = lby_delta > 0 and 60 or -60
@@ -1805,7 +1816,7 @@ local function resolver_work()
             -- Apply delta and time-based modifications
             local delta = desync - resolver.data[enemy].yaw.last_yaw
             local time_delta = entity.get_prop(enemy, "m_flSimulationTime") - resolver.data[enemy].yaw.last_change
-            local modifier = time_delta / math.max(resolver.data[enemy].yaw.delta, 0.001)
+            local modifier = time_delta / math_max(resolver.data[enemy].yaw.delta, 0.001)
 
             desync = (desync * 58) + (delta * modifier)
             
@@ -1828,9 +1839,9 @@ local function resolver_work()
                 
                 -- If we've been trying positive, try negative and vice versa
                 if miss_count % 2 == 0 then
-                    desync = math.abs(desync) > 0 and -math.abs(desync) or -58
+                    desync = math_abs(desync) > 0 and -math_abs(desync) or -58
                 else
-                    desync = math.abs(desync) > 0 and math.abs(desync) or 58
+                    desync = math_abs(desync) > 0 and math_abs(desync) or 58
                 end
                 
                 -- For very high miss counts, try extreme values
@@ -1855,7 +1866,7 @@ local function resolver_work()
                     resolver.data[enemy].lby.next_update = server_time + 0.22
                 end 
 
-                if math.abs((animstate.goal_feet_yaw - animstate.eye_angles_y) / 360) > 35 and server_time > resolver.data[enemy].lby.next_update then
+                if math_abs((animstate.goal_feet_yaw - animstate.eye_angles_y) / 360) > 35 and server_time > resolver.data[enemy].lby.next_update then
                     resolver.data[enemy].lby.next_update = server_time + 1.1
                 end 
             end 
@@ -1885,6 +1896,19 @@ local function resolver_work()
 end
 
 defensive_data = {}
+
+local function is_player_defensive_active(entindex)
+    local player = entity.get_local_player()
+    if not player or not entity.is_alive(player) then return false end
+    
+    local lp_pos = { entity.get_origin(player) }
+    local ent_pos = { entity.get_origin(entindex) }
+    
+    if not lp_pos[1] or not ent_pos[1] then return false end
+    
+    local distance = math_sqrt((ent_pos[1] - lp_pos[1])^2 + (ent_pos[2] - lp_pos[2])^2 + (ent_pos[3] - lp_pos[3])^2)
+    return distance < 1000 -- Within 1000 units
+end
 
 local function defensive_resolve()
     if ui.get(lua_menu.checkboxes.resolver) then
@@ -1961,7 +1985,7 @@ local function game_enhancer_work()
     end
 end
 
-local function game_enhancer_run()
+function game_enhancer_run()
     local enabled = ui.get(lua_menu.checkboxes.game_enhancer)
     
     if game_enhancer.state ~= enabled then
@@ -2015,7 +2039,7 @@ local function calculate_angle_prediction(entindex, ticks_ahead)
         return current_angles
     end
     
-    local speed = math.sqrt(velocity[1]^2 + velocity[2]^2)
+    local speed = math_sqrt(velocity[1]^2 + velocity[2]^2)
     local tick_interval = globals.tickinterval()
     local time_ahead = ticks_ahead * tick_interval
     
@@ -2050,7 +2074,7 @@ local function prediction_work()
         if entity.is_alive(ent) then
             local ent_pos = { entity.get_origin(ent) }
             if ent_pos[1] then
-                local dist = math.sqrt((ent_pos[1] - my_pos[1])^2 + (ent_pos[2] - my_pos[2])^2 + (ent_pos[3] - my_pos[3])^2)
+                local dist = math_sqrt((ent_pos[1] - my_pos[1])^2 + (ent_pos[2] - my_pos[2])^2 + (ent_pos[3] - my_pos[3])^2)
                 table.insert(sorted_enemies, { ent = ent, dist = dist })
             end
         end
@@ -2059,7 +2083,7 @@ local function prediction_work()
     table.sort(sorted_enemies, function(a, b) return a.dist < b.dist end)
     
     -- Process closest 3 enemies with enhanced prediction
-    for i = 1, math.min(3, #sorted_enemies) do
+    for i = 1, math_min(3, #sorted_enemies) do
         local ent = sorted_enemies[i].ent
         local steam64 = entity.get_steam64(ent) or ent
         
@@ -2093,7 +2117,7 @@ local function get_predicted_position(entindex, ticks_ahead)
     return data.predictions[ticks_ahead].pos
 end
 
-local function prediction_run()
+function prediction_run()
     local enabled = ui.get(lua_menu.checkboxes.prediction)
     
     if prediction.state ~= enabled then
@@ -2139,7 +2163,7 @@ end
 ---@fix hideshots
 local original_fakelag_limit = 0
 
-local function hideshots_fix()
+function hideshots_fix()
     local fix_enabled = ui.get(lua_menu.checkboxes.fix_hideshots)
     local hs_enabled = ui.get(ref.hs[2])
     
@@ -2160,8 +2184,8 @@ end
 
 ---@fakelag addons
 local original_variability = nil
-local function fake_lag()
-    local variability = 15 + 2 * math.random(0, (45 - 10) / 2)
+function fake_lag()
+    local variability = 15 + 2 * math_random(0, (45 - 10) / 2)
     local addon_enabled = ui.get(lua_menu.discloser.fake_lag_addon)
    
     if addon_enabled then
@@ -2180,7 +2204,7 @@ end
 ---@end
 
 ---@warmup aa
-local function warmup()
+function warmup()
     local player = entity.get_local_player()
     if not player then return end
 
@@ -2200,7 +2224,7 @@ end
 ---
 ---@damage indicator
 local displayed_min_damage = 0
-local function render_damage_indicator()
+function render_damage_indicator()
     if not ui.get(lua_menu.checkboxes.damage_indicator) then
         return
     end
@@ -2240,9 +2264,9 @@ local function render_damage_indicator()
     local font = ui.get(lua_menu.checkboxes.damage_indicator_font)
 
     if font == "Verdana" then
-        renderer.text(x, y, 255, 255, 255, 255, "c", nil, string.format("%.0f", displayed_min_damage))
+        renderer_text(x, y, 255, 255, 255, 255, "c", nil, string_format("%.0f", displayed_min_damage))
     elseif font == "Pixel" then
-        renderer.text(x - 5, y + 2, 255, 255, 255, 255, "c-", nil, string.format("%.0f", displayed_min_damage))
+        renderer_text(x - 5, y + 2, 255, 255, 255, 255, "c-", nil, string_format("%.0f", displayed_min_damage))
     end
 end
 
@@ -2252,7 +2276,7 @@ end
 local timer = globals.tickcount()
 local recharge_delay = 11
 
-local function handle_recharge()
+function handle_recharge()
     local lp = entity.get_local_player()
     if not entity.is_alive(lp) then return end
     
@@ -2276,7 +2300,7 @@ end
 
 ---@watermark
 local function hsv_to_rgb(h, s, v)
-    local c, x = v * s, v * s * (1 - math.abs((h * 6) % 2 - 1))
+    local c, x = v * s, v * s * (1 - math_abs((h * 6) % 2 - 1))
     local m = v - c
     local r, g, b = 0, 0, 0
 
@@ -2288,12 +2312,12 @@ local function hsv_to_rgb(h, s, v)
     else r, g, b = c, 0, x
     end
 
-    return math.floor((r + m) * 255), math.floor((g + m) * 255), math.floor((b + m) * 255)
+    return math_floor((r + m) * 255), math_floor((g + m) * 255), math_floor((b + m) * 255)
 end
 
 ---local function fade_alpha(min_alpha, max_alpha, speed)
 ---    local time = globals.realtime() * speed
----    return math.floor(min_alpha + (max_alpha - min_alpha) * (math.sin(time) * 0.5 + 0.5))
+---    return math_floor(min_alpha + (max_alpha - min_alpha) * (math_sin, math_rad, math_cos, math_atan, math_deg, math_pi, math_max, math_min, math_random, math_clamp, math_vec_length2d, math_angle_normalize, math_angle_diff, math_approach_angle(time) * 0.5 + 0.5))
 ---end
 
 local function gradient_text(color1, color2, text, speed)
@@ -2303,22 +2327,22 @@ local function gradient_text(color1, color2, text, speed)
     
     for i = 1, text_length do
         local char = text:sub(i, i)
-        local t = (math.sin(time + (i / text_length) * math.pi) + 1) / 2
-        local r = math.floor(color1[1] * t + color2[1] * (1 - t))
-        local g = math.floor(color1[2] * t + color2[2] * (1 - t))
-        local b = math.floor(color1[3] * t + color2[3] * (1 - t))
-        gradient_str = gradient_str .. string.format("\a%02X%02X%02XFF%s", r, g, b, char)
+        local t = (math_sin, math_rad, math_cos, math_atan, math_deg, math_pi, math_max, math_min, math_random, math_clamp, math_vec_length2d, math_angle_normalize, math_angle_diff, math_approach_angle(time + (i / text_length) * math_pi) + 1) / 2
+        local r = math_floor(color1[1] * t + color2[1] * (1 - t))
+        local g = math_floor(color1[2] * t + color2[2] * (1 - t))
+        local b = math_floor(color1[3] * t + color2[3] * (1 - t))
+        gradient_str = gradient_str .. string_format("\a%02X%02X%02XFF%s", r, g, b, char)
     end
     
     return gradient_str
 end
 
-local function render_watermark()
+function render_watermark()
     local screen_x, screen_y = client.screen_size()
     local start_x = screen_x / 2
     local y = screen_y - 15
     local text = gradient_text({56, 152, 255}, {152, 245, 249}, "VOID", 3.33)
-    renderer.text(start_x, y, 255, 255, 255, 255, "dc", nil, text)
+    renderer_text(start_x, y, 255, 255, 255, 255, "dc", nil, text)
 end
 ---@end
 
@@ -2367,13 +2391,13 @@ local event_logger = {} do
         local backtrack = globals.tickcount() - cached.tick
 
         if backtrack ~= 0 then
-            options[#options+1] = string.format('bt: %d tick%s (%i ms)', backtrack, math.abs(backtrack) == 1 and '' or 's', math.floor(backtrack*globals.tickinterval()*1000))
+            options[#options+1] = string_format('bt: %d tick%s (%i ms)', backtrack, math_abs(backtrack) == 1 and '' or 's', math_floor(backtrack*globals.tickinterval()*1000))
         end
 
         local register_delay = client.timestamp() - cached.timestamp
 
         if register_delay ~= 0 then
-            options[#options+1] = string.format('delay: %i ms', register_delay)
+            options[#options+1] = string_format('delay: %i ms', register_delay)
         end
 
         local name = entity.get_player_name(event.target)
@@ -2382,18 +2406,18 @@ local event_logger = {} do
         local damage = event.damage
         local health = entity.get_prop(event.target, 'm_iHealth')
         local hit_chance = event.hit_chance
-        local logger_text = string.format('Hit %s\'s %s for %d%s damage (%s, %d remaining%s)',
+        local logger_text = string_format('Hit %s\'s %s for %d%s damage (%s, %d remaining%s)',
             name,
             hitgroup,
             tonumber(damage),
-            cached.wanted_damage ~= damage and string.format('(%d)', cached.wanted_damage) or '',
-            target_hitgroup ~= hitgroup and string.format('aimed: %s(%d%%)', target_hitgroup, hit_chance) or string.format('th: %d%%', hit_chance),
+            cached.wanted_damage ~= damage and string_format('(%d)', cached.wanted_damage) or '',
+            target_hitgroup ~= hitgroup and string_format('aimed: %s(%d%%)', target_hitgroup, hit_chance) or string_format('th: %d%%', hit_chance),
             health,
-            #options > 0 and string.format(', %s', table.concat(options, ', ')) or ''
+            #options > 0 and string_format(', %s', table_concat(options, ', ')) or ''
         )
 
         if ui.get(lua_menu.checkboxes.logs) then
-            client.color_log(140, 220, 140, string.format("[VOID] %s", logger_text))
+            client.color_log(140, 220, 140, string_format("[VOID] %s", logger_text))
         end
     end
 
@@ -2412,13 +2436,13 @@ local event_logger = {} do
         local backtrack = globals.tickcount() - cached.tick
 
         if backtrack ~= 0 then
-            options[#options+1] = string.format('bt: %d tick%s (%i ms)', backtrack, math.abs(backtrack) == 1 and '' or 's', math.floor(backtrack*globals.tickinterval()*1000))
+            options[#options+1] = string_format('bt: %d tick%s (%i ms)', backtrack, math_abs(backtrack) == 1 and '' or 's', math_floor(backtrack*globals.tickinterval()*1000))
         end
 
         local register_delay = client.timestamp() - cached.timestamp
 
         if register_delay ~= 0 then
-            options[#options+1] = string.format('delay: %i ms', register_delay)
+            options[#options+1] = string_format('delay: %i ms', register_delay)
         end
 
         local name = entity.get_player_name(event.target)
@@ -2426,17 +2450,17 @@ local event_logger = {} do
         local reason = event.reason
         local damage = cached.wanted_damage
         local hit_chance = event.hit_chance
-        local logger_text = string.format('Missed %s\'s %s due to %s (td: %d, th: %d%%%s)',
+        local logger_text = string_format('Missed %s\'s %s due to %s (td: %d, th: %d%%%s)',
             name,
             hitgroup,
             reason,
             tonumber(damage),
             hit_chance,
-            #options > 0 and string.format(', %s', table.concat(options, ', ')) or ''
+            #options > 0 and string_format(', %s', table_concat(options, ', ')) or ''
         )
 
         if ui.get(lua_menu.checkboxes.logs) then
-            client.color_log(220, 140, 140, string.format("[VOID] %s", logger_text))
+            client.color_log(220, 140, 140, string_format("[VOID] %s", logger_text))
         end
     end
 
@@ -2468,7 +2492,7 @@ local event_logger = {} do
         local name = entity.get_player_name(target)
         local damage = event.dmg_health
 
-        local logger_text = string.format('%s %s for %d damage',
+        local logger_text = string_format('%s %s for %d damage',
             wpn_type,
             name,
             tonumber(damage)
@@ -2481,7 +2505,7 @@ local event_logger = {} do
                 r, g, b = 0, 150, 255 -- Blue color for knife
             end
             
-            client.color_log(r, g, b, string.format("[VOID] %s", logger_text))
+            client.color_log(r, g, b, string_format("[VOID] %s", logger_text))
         end
     end
 end
