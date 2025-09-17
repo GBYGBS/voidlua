@@ -152,12 +152,12 @@ end
 
 entity.get_animlayer = function(idx, layer_idx)
     local addr = entity.get_address(idx)
-    if not addr ) then
+    if not addr then
         print("[VOID] Warning: Failed to get entity address for player ", idx)
         return nil
     end
     local layer_ptr = ffi.cast("C_AnimationLayer *", ffi.cast('uintptr_t', addr) + 0x2990)[0]
-    if layer_ptr )
+    if layer_ptr then
         return layer_ptr[layer_idx]
     end
     return nil
