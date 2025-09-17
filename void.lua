@@ -637,7 +637,8 @@ local function get_player_state(cmd)
 
     local vecvelocity = { entity.get_prop(lp, 'm_vecVelocity') }
     local flags = entity.get_prop(lp, 'm_fFlags')
-    local velocity = vector(entity.get_prop(lp, "m_vecAbsVelocity"):length2d())
+    local absvelocity = { entity.get_prop(lp, "m_vecAbsVelocity") }
+    local velocity = math.sqrt((absvelocity[1] or 0)^2 + (absvelocity[2] or 0)^2)
     local in_grounded = bit.band(flags, 1) == 1
     local jump = bit.band(flags, 1) == 0 or cmd.in_jump == 1
     local ducked = entity.get_prop(lp, 'm_flDuckAmount') > 0.7
@@ -1960,7 +1961,7 @@ local function game_enhancer_work()
     end
 end
 
-function game_enhancer_run()
+local function game_enhancer_run()
     local enabled = ui.get(lua_menu.checkboxes.game_enhancer)
     
     if game_enhancer.state ~= enabled then
@@ -2199,7 +2200,7 @@ end
 ---
 ---@damage indicator
 local displayed_min_damage = 0
-function render_damage_indicator()
+local function render_damage_indicator()
     if not ui.get(lua_menu.checkboxes.damage_indicator) then
         return
     end
@@ -2245,31 +2246,6 @@ function render_damage_indicator()
     end
 end
 
-
-    local player = entity.get_local_player()
-    if not player or not entity.is_alive(player) then
-        return
-    end
-
-    local screen_x, screen_y = client.screen_size()
-    local x = screen_x / 2 + 15
-    local y = screen_y / 2 - 11
-
-    local min_damage = ui.get(ref.min_damage)
-    if ui.get(ref.min_damage_override[2]) then
-        min_damage = ui.get(ref.min_damage_override[3])
-    end
-
-    displayed_min_damage = tools.lerp(displayed_min_damage, min_damage, 0.12)
-
-    local font = ui.get(lua_menu.checkboxes.damage_indicator_font)
-
-    if font == "Verdana" then
-        renderer.text(x, y, 255, 255, 255, 255, "c", nil, string.format("%.0f", displayed_min_damage))
-    elseif font == "Pixel" then
-        renderer.text(x - 5, y + 2, 255, 255, 255, 255, "c-", nil, string.format("%.0f", displayed_min_damage))
-    end
-end
 ---@end
 
 ---@recharge
