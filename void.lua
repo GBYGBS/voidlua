@@ -168,7 +168,7 @@ entity.get_max_desync = function(ent)
     local frac = (ent.stop_to_full_running_fraction * -0.3 - 0.2) * ways + 1
     local ducking = ent.duck_amount
 
-    if ducking > 0 )
+    if ducking > 0 then
         frac = frac + ducking * ways * (0.5 - frac)
     end
 
@@ -200,9 +200,9 @@ math.approach_angle = function(target, value, speed)
     local delta = math.angle_diff(target, value)
     speed = math.abs(speed)
 
-    if delta > speed )
+    if delta > speed then
         value = value + speed
-    elseif delta < -speed )
+    elseif delta < -speed then
         value = value - speed
     else
         value = target
@@ -230,7 +230,7 @@ local tools = {
 local function ui_set_smart(ref_item, value)
     if ref_item == nil then return end
     local current = ui.get(ref_item)
-    if current ~= value )
+    if current ~= value then
         ui.set(ref_item, value)
     end
 end
@@ -240,15 +240,15 @@ local function get_enemies_filtered()
     local filtered = {}
     local me = entity.get_local_player()
     
-    if me and entity.is_alive(me) )
+    if me and entity.is_alive(me) then
         local my_pos = { entity.get_origin(me) }
         for i = 1, #enemies do
             local ent = enemies[i]
-            if entity.is_alive(ent) )
+            if entity.is_alive(ent) then
                 local ent_pos = { entity.get_origin(ent) }
-                if ent_pos[1] )
+                if ent_pos[1] then
                     local distance = math.sqrt((ent_pos[1] - my_pos[1])^2 + (ent_pos[2] - my_pos[2])^2 + (ent_pos[3] - my_pos[3])^2)
-                    if distance < 4000 )
+                    if distance < 4000 then
                         table.insert(filtered, ent)
                     end
                 end
@@ -271,7 +271,7 @@ end
 
 local function contains(table, val)
     for i = 1, #table do
-        if table[i] == val )
+        if table[i] == val then
             return true
         end
     end
@@ -462,7 +462,7 @@ visuals_visibility()
 
 for _, state_name in ipairs(states) do
     local prefix = "\a0FA6E0FF" .. state_name .. " \aC0C0C0FF"
-    if state_name ~= "Global" )
+    if state_name ~= "Global" then
         lua_menu.aa[state_name] = {
             allow          = ui.new_checkbox("AA", "Anti-Aimbot angles", "Allow " .. prefix),
             yaw_select     = ui.new_combobox("AA", "Anti-Aimbot angles", prefix .. "yaw type", "180", "Delayed", "Layered", "Discloser"),
@@ -522,72 +522,72 @@ local function aa_visibility()
         local is_allowed = (state_name == "Global" or (state.allow and ui.get(state.allow))
 
         if state.allow then ui.set_visible(state.allow, is_current) end)
-        if state.yaw_select )
-            ui.set_visible(state.yaw_select, is_current and is_allowed))
+        if state.yaw_select then
+            ui.set_visible(state.yaw_select, is_current and is_allowed)
         end
-        if state.yaw_180 )
+        if state.yaw_180 then
             ui.set_visible(state.yaw_180, is_current and is_allowed and (ui.get(state.yaw_select) == "180"))
         end
-        if state.yaw_l )
+        if state.yaw_l then
             local sel = ui.get(state.yaw_select)
             ui.set_visible(state.yaw_l, is_current and is_allowed and (sel == "Delayed" or sel == "Layered" or sel == "Discloser"))
         end
-        if state.yaw_r )
+        if state.yaw_r then
             local sel = ui.get(state.yaw_select)
             ui.set_visible(state.yaw_r, is_current and is_allowed and (sel == "Delayed" or sel == "Layered" or sel == "Discloser"))
         end
-        if state.yaw_d )
+        if state.yaw_d then
             local sel = ui.get(state.yaw_select)
             ui.set_visible(state.yaw_d, is_current and is_allowed and (sel == "Delayed" or sel == "Discloser"))
         end
-        if state.yaw_rd )
+        if state.yaw_rd then
             local sel = ui.get(state.yaw_select)
             ui.set_visible(state.yaw_rd, is_current and is_allowed and (sel == "Delayed" or sel == "Discloser"))
         end
-        if state.yaw_rds )
+        if state.yaw_rds then
             local sel = ui.get(state.yaw_select)
             ui.set_visible(state.yaw_rds, is_current and is_allowed and (sel == "Delayed" or sel == "Discloser") and ui.get(state.yaw_rd))
         end
-        if state.yaw_jitter )
-            ui.set_visible(state.yaw_jitter, is_current and is_allowed and ui.get(state.yaw_select) ~= "Discloser"))
+        if state.yaw_jitter then
+            ui.set_visible(state.yaw_jitter, is_current and is_allowed and ui.get(state.yaw_select) ~= "Discloser")
         end
-        if state.yaw_jitter_value )
-            ui.set_visible(state.yaw_jitter_value, is_current and is_allowed and ui.get(state.yaw_jitter) ~= "Off" and ui.get(state.yaw_select) ~= "Discloser"))
+        if state.yaw_jitter_value then
+            ui.set_visible(state.yaw_jitter_value, is_current and is_allowed and ui.get(state.yaw_jitter) ~= "Off" and ui.get(state.yaw_select) ~= "Discloser")
         end
-        if state.yaw_bodyselect )
-            ui.set_visible(state.yaw_bodyselect, is_current and is_allowed))
+        if state.yaw_bodyselect then
+            ui.set_visible(state.yaw_bodyselect, is_current and is_allowed)
         end
-        if state.yaw_bodytype )
-            ui.set_visible(state.yaw_bodytype, is_current and is_allowed and ui.get(state.yaw_bodyselect) ~= "Off"))
+        if state.yaw_bodytype then
+            ui.set_visible(state.yaw_bodytype, is_current and is_allowed and ui.get(state.yaw_bodyselect) ~= "Off")
         end
-        if state.yaw_bodyvalue )
-            ui.set_visible(state.yaw_bodyvalue, is_current and is_allowed and ui.get(state.yaw_bodyselect) ~= "Off"))
+        if state.yaw_bodyvalue then
+            ui.set_visible(state.yaw_bodyvalue, is_current and is_allowed and ui.get(state.yaw_bodyselect) ~= "Off")
         end
-        if state.break_type )
-            ui.set_visible(state.break_type, is_current and is_allowed))
+        if state.break_type then
+            ui.set_visible(state.break_type, is_current and is_allowed)
         end
-        if state.defensive_aa )
-            ui.set_visible(state.defensive_aa, is_current and is_allowed))
+        if state.defensive_aa then
+            ui.set_visible(state.defensive_aa, is_current and is_allowed)
         end
-        if state.defensive_pitch )
+        if state.defensive_pitch then
             ui.set_visible(state.defensive_pitch, is_current and is_allowed and ui.get(state.defensive_aa))
         end
-        if state.defensive_yaw )
+        if state.defensive_yaw then
             ui.set_visible(state.defensive_yaw, is_current and is_allowed and ui.get(state.defensive_aa))
         end
-        if state.defensive_pitch_slider )
+        if state.defensive_pitch_slider then
             ui.set_visible(state.defensive_pitch_slider, is_current and is_allowed and ui.get(state.defensive_aa) and (ui.get(state.defensive_pitch) == "Static" or ui.get(state.defensive_pitch) == "Jitter"))
         end
-        if state.defensive_pitch_slider_2 )
-            ui.set_visible(state.defensive_pitch_slider_2, is_current and is_allowed and ui.get(state.defensive_aa) and ui.get(state.defensive_pitch) == "Jitter"))
+        if state.defensive_pitch_slider_2 then
+            ui.set_visible(state.defensive_pitch_slider_2, is_current and is_allowed and ui.get(state.defensive_aa) and ui.get(state.defensive_pitch) == "Jitter")
         end
-        if state.defensive_yaw_slider )
+        if state.defensive_yaw_slider then
             ui.set_visible(state.defensive_yaw_slider, is_current and is_allowed and ui.get(state.defensive_aa) and (ui.get(state.defensive_yaw) == "Static" or ui.get(state.defensive_yaw) == "Jitter"))
         end
-        if state.defensive_yaw_slider_2 )
+        if state.defensive_yaw_slider_2 then
             ui.set_visible(state.defensive_yaw_slider_2, is_current and is_allowed and ui.get(state.defensive_aa) and (ui.get(state.defensive_yaw) == "Jitter"))
         end
-        if state.defensive_yaw_speed )
+        if state.defensive_yaw_speed then
             ui.set_visible(state.defensive_yaw_speed, is_current and is_allowed and ui.get(state.defensive_aa) and (ui.get(state.defensive_yaw) == "Spin"))
         end
     end
@@ -617,9 +617,9 @@ local function delayjitter(switchyaw1, switchyaw2, speed, yawrandom)
     local random_left  = math.random(0, switchyaw1 * yawrandom / 100)
     local random_right = math.random(0, switchyaw2 * yawrandom / 100)
 
-    if globals.chokedcommands() == 0 and (command_number % 2 >= math.abs(math.sin(globals.chokedcommands()) )
+    if globals.chokedcommands() == 0 and (command_number % 2 >= math.abs(math.sin(globals.chokedcommands()))) then
         delay_timer = delay_timer + 1
-        if delay_timer % speed == 0 )
+        if delay_timer % speed == 0 then
             jitter_switch = not jitter_switch
         end
     end
@@ -631,7 +631,7 @@ end
 is_on_ground = false
 local function get_player_state(cmd)
     local lp = entity.get_local_player()
-    if not lp or not entity.is_alive(lp) )
+    if not lp or not entity.is_alive(lp) then
         return "Unknown"
     end
 
@@ -645,19 +645,19 @@ local function get_player_state(cmd)
     local is_slowwalk = ui.get(ref.slow_walk[1]) and ui.get(ref.slow_walk[2])
     is_on_ground = in_grounded
 
-    if jump and duck )
+    if jump and duck then
         return "Air-Duck"
-    elseif jump )
+    elseif jump then
         return "Air"
-    elseif duck and velocity > 10 )
+    elseif duck and velocity > 10 then
         return "Duck-Running"
-    elseif duck and velocity < 10 )
+    elseif duck and velocity < 10 then
         return "Duck"
-    elseif in_grounded and is_slowwalk and velocity > 10 )
+    elseif in_grounded and is_slowwalk and velocity > 10 then
         return "Slow-walk"
-    elseif in_grounded and velocity > 5 )
+    elseif in_grounded and velocity > 5 then
         return "Running"
-    elseif in_grounded and velocity < 5 )
+    elseif in_grounded and velocity < 5 then
         return "Stand"
     else
         return "Unknown"
@@ -680,14 +680,14 @@ local function defensiveCheck(cmd)
     local tick_base = entity.get_prop(lp, "m_nTickBase") or 0
     local can_exploit = current_tick > tick_base
 
-    if math.abs(tick_base - defensive_system.max_tick_base) > 64 and can_exploit )
+    if math.abs(tick_base - defensive_system.max_tick_base) > 64 and can_exploit then
         defensive_system.max_tick_base = 0
     end
 
-    if tick_base > defensive_system.max_tick_base )
+    if tick_base > defensive_system.max_tick_base then
         defensive_system.max_tick_base = tick_base
-    elseif defensive_system.max_tick_base > tick_base )
-        defensive_system.ticks_count = can_exploit and math.min(14, math.max(0, defensive_system.max_tick_base - tick_base - 1) or 0
+    elseif defensive_system.max_tick_base > tick_base then
+        defensive_system.ticks_count = can_exploit and math.min(14, math.max(0, defensive_system.max_tick_base - tick_base - 1)) or 0
     end
 
     defensive_system.is_defensive = (defensive_system.ticks_count > 2
@@ -711,11 +711,11 @@ local function on_setup_command(cmd)
 
     local condition = get_player_state(cmd)
     local settings = lua_menu.aa[condition]
-    if not settings or (condition ~= "Global" and not ui.get(settings.allow) )
+    if not settings or (condition ~= "Global" and not ui.get(settings.allow)) then
         settings = lua_menu.aa["Global"]
     end
 
-    if not entity.is_alive(entity.get_local_player() )
+    if not entity.is_alive(entity.get_local_player()) then
         return 
     end
 
@@ -729,18 +729,18 @@ local function on_setup_command(cmd)
     local switch_ticks = tools.time_to_ticks(globals.realtime() - current_tick)
     local switch
 
-    if yawSelect == "180" )
+    if yawSelect == "180" then
         ui_set_smart(ref.yaw[2], ui.get(settings.yaw_180))
-    elseif yawSelect == "Delayed" or yawSelect == "Discloser" )
+    elseif yawSelect == "Delayed" or yawSelect == "Discloser" then
         ui_set_smart(ref.yaw[2], delayjitter(yaw_l, yaw_r, delay_total, 0))
-    elseif yawSelect == "Layered" )
-        if switch_ticks * 2 >= 3 )
+    elseif yawSelect == "Layered" then
+        if switch_ticks * 2 >= 3 then
             switch = true
         else
             switch = false
         end
-        if switch_ticks >= 3 )
-            current_tick = tools.time_to_ticks(globals.realtime()
+        if switch_ticks >= 3 then
+            current_tick = tools.time_to_ticks(globals.realtime())
         end
         ui_set_smart(ref.yaw[2], switch and yaw_l or yaw_r)
     end
@@ -749,64 +749,64 @@ local function on_setup_command(cmd)
     local bodyType   = ui.get(settings.yaw_bodytype)
     local bodyValue  = ui.get(settings.yaw_bodyvalue)
 
-    if bodySelect == "GameSense" )
-        if bodyType == "Jitter" )
-            if yawSelect == "Delayed" or yawSelect == "Discloser" )
+    if bodySelect == "GameSense" then
+        if bodyType == "Jitter" then
+            if yawSelect == "Delayed" or yawSelect == "Discloser" then
                 ui_set_smart(ref.body_yaw[1], "Static")
                 ui_set_smart(ref.body_yaw[2], delayjitter(-bodyValue, bodyValue, delay_total, 0))
-            elseif yawSelect == "Layered" )
+            elseif yawSelect == "Layered" then
                 ui_set_smart(ref.body_yaw[1], "Static")
                 ui_set_smart(ref.body_yaw[2], switch and -bodyValue or bodyValue)
             else
                 ui_set_smart(ref.body_yaw[1], "Static")
                 ui_set_smart(ref.body_yaw[2], delayjitter(-bodyValue, bodyValue, 1, 0))
             end
-        elseif bodyType == "Static" )
+        elseif bodyType == "Static" then
             ui.set(ref.body_yaw[1], "Static")
             ui.set(ref.body_yaw[2], bodyValue)
         end
-    elseif bodySelect == "Off" )
+    elseif bodySelect == "Off" then
         ui.set(ref.body_yaw[1], "Off")
-    elseif bodySelect == "Custom" )
-        if bodyType == "Static" )
+    elseif bodySelect == "Custom" then
+        if bodyType == "Static" then
             ui_set_smart(ref.body_yaw[1], "Static")
-            local custom_val = ((not ui.get(ref.dt[2]) and not ui.get(ref.hs[2]) or ui.get(ref.fd) and bodyValue) or 0
+            local custom_val = ((not ui.get(ref.dt[2]) and not ui.get(ref.hs[2])) or ui.get(ref.fd)) and bodyValue or 0
             ui_set_smart(ref.body_yaw[2], custom_val)
-            if globals.chokedcommands() > 0 )
+            if globals.chokedcommands() > 0 then
                 cmd.allow_send_packet = true
             else
                 cmd.allow_send_packet = false
                 ui_set_smart(ref.yaw[2], -bodyValue)
             end
-        elseif bodyType == "Jitter" )
-            if yawSelect == "Delayed" )
+        elseif bodyType == "Jitter" then
+            if yawSelect == "Delayed" then
                 ui_set_smart(ref.body_yaw[1], "Static")
-                local jitter_val = (not ui.get(ref.dt[2]) and not ui.get(ref.hs[2]) or ui.get(ref.fd)
+                local jitter_val = ((not ui.get(ref.dt[2]) and not ui.get(ref.hs[2])) or ui.get(ref.fd))
                                   and delayjitter(-bodyValue, bodyValue, delay_total, 0) or 0
                 ui_set_smart(ref.body_yaw[2], jitter_val)
-                if globals.chokedcommands() > 0 )
+                if globals.chokedcommands() > 0 then
                     cmd.allow_send_packet = true
                 else
                     cmd.allow_send_packet = false
                     ui_set_smart(ref.yaw[2], delayjitter(bodyValue, -bodyValue, delay_total, 0))
                 end
-            elseif yawSelect == "Discloser" )
+            elseif yawSelect == "Discloser" then
                 ui_set_smart(ref.body_yaw[1], "Static")
-                local jitter_val = (not ui.get(ref.dt[2]) and not ui.get(ref.hs[2]) or ui.get(ref.fd)
+                local jitter_val = ((not ui.get(ref.dt[2]) and not ui.get(ref.hs[2])) or ui.get(ref.fd))
                                   and delayjitter(-bodyValue, bodyValue, delay_total, 0) or 0
                 ui_set_smart(ref.body_yaw[2], jitter_val)
-                if globals.chokedcommands() > 0 )
+                if globals.chokedcommands() > 0 then
                     cmd.allow_send_packet = true
                 else
                     cmd.allow_send_packet = false
                     ui_set_smart(ref.yaw[2], delayjitter(bodyValue, -bodyValue, delay_total, 0))
                 end
-            elseif yawSelect == "Layered" )
+            elseif yawSelect == "Layered" then
                 ui_set_smart(ref.body_yaw[1], "Static")
-                local condition = (not ui.get(ref.dt[2]) and not ui.get(ref.hs[2]) or ui.get(ref.fd)
+                local condition = ((not ui.get(ref.dt[2]) and not ui.get(ref.hs[2])) or ui.get(ref.fd))
                 local layered_val = condition and (switch and -bodyValue or bodyValue) or 0
                 ui_set_smart(ref.body_yaw[2], layered_val)
-                if globals.chokedcommands() > 0 )
+                if globals.chokedcommands() > 0 then
                     cmd.allow_send_packet = true
                 else
                     cmd.allow_send_packet = false
@@ -814,10 +814,10 @@ local function on_setup_command(cmd)
                 end
             else
                 ui_set_smart(ref.body_yaw[1], "Static")
-                local jitter_val = (not ui.get(ref.dt[2]) and not ui.get(ref.hs[2]) or ui.get(ref.fd)
+                local jitter_val = ((not ui.get(ref.dt[2]) and not ui.get(ref.hs[2])) or ui.get(ref.fd))
                                   and delayjitter(-bodyValue, bodyValue, 1, 0) or 0
                 ui_set_smart(ref.body_yaw[2], jitter_val)
-                if globals.chokedcommands() > 0 )
+                if globals.chokedcommands() > 0 then
                     cmd.allow_send_packet = true
                 else
                     cmd.allow_send_packet = false
@@ -827,14 +827,14 @@ local function on_setup_command(cmd)
         end
     end
 
-    if yawSelect ~= "Discloser" )
+    if yawSelect ~= "Discloser" then
         ui_set_smart(ref.yaw_jitter[1], ui.get(settings.yaw_jitter))
         ui_set_smart(ref.yaw_jitter[2], ui.get(settings.yaw_jitter_value))
     end
 
-    if yawSelect == "Discloser" )
-        if ui.get(lua_menu.discloser.micro_yaw) )
-            if globals.chokedcommands() > 0 )
+    if yawSelect == "Discloser" then
+        if ui.get(lua_menu.discloser.micro_yaw) then
+            if globals.chokedcommands() > 0 then
                 ui_set_smart(ref.yaw_jitter[1], "Random")
                 ui_set_smart(ref.yaw_jitter[2], ui.get(lua_menu.discloser.first_flick))
             else
@@ -849,32 +849,32 @@ local function on_setup_command(cmd)
 
     cmd.force_defensive = break_ == "Always" and true or false
 
-    if ui.get(settings.defensive_aa) )
-        if ui.get(settings.defensive_pitch) == "Static" )
+    if ui.get(settings.defensive_aa) then
+        if ui.get(settings.defensive_pitch) == "Static" then
             defensive_data.pitch = ui.get(settings.defensive_pitch_slider)
-        elseif ui.get(settings.defensive_pitch) == "Jitter" )
+        elseif ui.get(settings.defensive_pitch) == "Jitter" then
             defensive_data.pitch = delayjitter(ui.get(settings.defensive_pitch_slider), ui.get(settings.defensive_pitch_slider_2), delay_total, 0)
         end
 
-        if ui.get(settings.defensive_yaw) == "Static" )
+        if ui.get(settings.defensive_yaw) == "Static" then
             defensive_data.yaw = ui.get(settings.defensive_yaw_slider)
-        elseif ui.get(settings.defensive_yaw) == "Jitter" )
+        elseif ui.get(settings.defensive_yaw) == "Jitter" then
             defensive_data.yaw = delayjitter(ui.get(settings.defensive_yaw_slider), ui.get(settings.defensive_yaw_slider_2), delay_total, 0)
-        elseif ui.get(settings.defensive_yaw) == "Spin" )
+        elseif ui.get(settings.defensive_yaw) == "Spin" then
             defensive_data.yaw = ui.get(settings.defensive_yaw_speed)
         end
     end
 
-    if defensive_system.is_defensive and ui.get(settings.defensive_aa) )
+    if defensive_system.is_defensive and ui.get(settings.defensive_aa) then
         ui.set(ref.yaw_jitter[1], "Off")
-        if ui.get(settings.defensive_pitch) ~= "Off" )
+        if ui.get(settings.defensive_pitch) ~= "Off" then
             ui_set_smart(ref.pitch[1], "Custom")
             ui_set_smart(ref.pitch[2], defensive_data.pitch)
         end
-        if ui.get(settings.defensive_yaw) ~= "Off" and ui.get(settings.defensive_yaw) ~= "Spin" )
+        if ui.get(settings.defensive_yaw) ~= "Off" and ui.get(settings.defensive_yaw) ~= "Spin" then
             ui_set_smart(ref.yaw[1], "180")
             ui_set_smart(ref.yaw[2], defensive_data.yaw)
-        elseif ui.get(settings.defensive_yaw) == "Spin" )
+        elseif ui.get(settings.defensive_yaw) == "Spin" then
             ui_set_smart(ref.yaw[1], "Spin")
             ui_set_smart(ref.yaw[2], defensive_data.yaw)
         end
@@ -884,7 +884,7 @@ end
 
 ---@freestand
 local function freestanding()    
-    if ui.get(lua_menu.discloser.freestand) )
+    if ui.get(lua_menu.discloser.freestand) then
         ui_set_smart(ref.freestand[1], true)   
         ui_set_smart(ref.freestand[2], "Always On")
     else
@@ -896,26 +896,26 @@ end
 
 ---@safehead
 local function safehead(cmd)
-    if not ui.get(lua_menu.discloser.safehead) )
+    if not ui.get(lua_menu.discloser.safehead) then
         return
     end
     local player = entity.get_local_player()
-    if not player or not entity.is_alive(player) )
+    if not player or not entity.is_alive(player) then
         return
     end
 
     local state = get_player_state(cmd)
-    if state == "Air-Duck" )
+    if state == "Air-Duck" then
         local active_weapon = entity.get_prop(player, "m_hActiveWeapon")
-        if active_weapon and entity.get_classname(active_weapon) == "CKnife" )
+        if active_weapon and entity.get_classname(active_weapon) == "CKnife" then
             ui.set(ref.yaw[1], "180")
             ui.set(ref.yaw[2], 0)
             ui.set(ref.body_yaw[2], -60)
             ui.set(ref.pitch[2], 89)
             ui.set(ref.yaw_jitter[1], "Off")
-            if ui.get(lua_menu.discloser.e_spam) )
+            if ui.get(lua_menu.discloser.e_spam) then
                 cmd.force_defensive = true
-                if defensive_system.is_defensive )
+                if defensive_system.is_defensive then
                     ui.set(ref.yaw[1], "180")
                     ui.set(ref.yaw[2], -180)
                     ui.set(ref.pitch[1], "Custom")
@@ -941,18 +941,18 @@ local function manual_yaw()
     local curtime = globals.curtime()
     
     for _, mapping in ipairs(yawDirectionMapping) do
-        if mapping.keyFunc() and (last_press_t_dir + 0.13 < curtime) )
+        if mapping.keyFunc() and (last_press_t_dir + 0.13 < curtime) then
             yaw_direction = (yaw_direction == mapping.value) and 0 or mapping.value
             last_press_t_dir = curtime
             break
         end
     end
 
-    if last_press_t_dir > curtime )
+    if last_press_t_dir > curtime then
         last_press_t_dir = curtime
     end
 
-    if yaw_direction ~= 0 )
+    if yaw_direction ~= 0 then
         ui.set(ref.yaw_base, "Local view")
         ui.set(ref.yaw[1], "180")
         ui.set(ref.yaw[2], yaw_direction)
@@ -987,7 +987,7 @@ local function render_manual()
         manual_arrow_cache.last_screen_size[1] ~= screenW or
         manual_arrow_cache.last_screen_size[2] ~= screenH
 
-    if needs_update )
+    if needs_update then
         local scope_offset = isScoped and 30 or 0
         local base_offset = 60
         local arrowWidth, arrowHeight = 20, 20
@@ -995,7 +995,7 @@ local function render_manual()
         local cx, cy
         local pos = {}
 
-        if yaw_direction == -90 )
+        if yaw_direction == -90 then
             cx = centerX - base_offset
             cy = centerY - scope_offset
             pos = {
@@ -1006,7 +1006,7 @@ local function render_manual()
                 bottomX = cx + arrowWidth / 2,
                 bottomY = cy + arrowHeight / 2
             }
-        elseif yaw_direction == 90 )
+        elseif yaw_direction == 90 then
             cx = centerX + base_offset
             cy = centerY - scope_offset
             pos = {
@@ -1017,7 +1017,7 @@ local function render_manual()
                 bottomX = cx - arrowWidth / 2,
                 bottomY = cy + arrowHeight / 2
             }
-        elseif yaw_direction == -180 or yaw_direction == 180 )
+        elseif yaw_direction == -180 or yaw_direction == 180 then
             cx = centerX
             cy = centerY - base_offset - scope_offset
             pos = {
@@ -1048,20 +1048,20 @@ local function render_manual()
     end
 
     local pos = manual_arrow_cache.cached_positions
-    if not pos or next(pos) == nil )
+    if not pos or next(pos) == nil then
         return
     end
 
     local r, g, b, a = 255, 255, 255, 255
 
-    if yaw_direction == -90 or yaw_direction == 90 )
-        if pos.tipX and pos.topX and pos.bottomX )
+    if yaw_direction == -90 or yaw_direction == 90 then
+        if pos.tipX and pos.topX and pos.bottomX then
             renderer.line(pos.tipX, pos.tipY, pos.topX, pos.topY, r, g, b, a)
             renderer.line(pos.topX, pos.topY, pos.bottomX, pos.bottomY, r, g, b, a)
             renderer.line(pos.bottomX, pos.bottomY, pos.tipX, pos.tipY, r, g, b, a)
         end
-    elseif yaw_direction == -180 or yaw_direction == 180 )
-        if pos.tipX and pos.leftX and pos.rightX )
+    elseif yaw_direction == -180 or yaw_direction == 180 then
+        if pos.tipX and pos.leftX and pos.rightX then
             renderer.line(pos.tipX, pos.tipY, pos.leftX, pos.leftY, r, g, b, a)
             renderer.line(pos.leftX, pos.leftY, pos.rightX, pos.rightY, r, g, b, a)
             renderer.line(pos.rightX, pos.rightY, pos.tipX, pos.tipY, r, g, b, a)
@@ -1156,8 +1156,8 @@ local function clantag()
     local server_tick = globals.tickcount()
     local current_step = math.floor(server_tick / frame_interval)
 
-    if not enabled )
-        if last_step ~= -1 )
+    if not enabled then
+        if last_step ~= -1 then
             client.set_clan_tag("")
             last_step = -1
             last_sent_tag = ""
@@ -1169,7 +1169,7 @@ local function clantag()
     
     local new_index = (current_step % #clan_tags) + 1
     local tag = clan_tags[new_index]
-    if tag ~= last_sent_tag )
+    if tag ~= last_sent_tag then
         client.set_clan_tag(tag)
         last_sent_tag = tag
     end
@@ -1211,7 +1211,7 @@ local function export_config()
     for _, state_name in ipairs(states) do
         local state_config = {}
         
-        if state_name ~= "Global" )
+        if state_name ~= "Global" then
             state_config.allow = ui.get(lua_menu.aa[state_name].allow)
         end
 
@@ -1240,19 +1240,19 @@ local function import_config(base64_data)
     local config_data = json.parse(json_data)
 
     for k, v in pairs(config_data.discloser or {}) do
-        if lua_menu.discloser[k] )
+        if lua_menu.discloser[k] then
             ui.set(lua_menu.discloser[k], v)
         end
     end
 
     for k, v in pairs(config_data.visuals or {}) do
-        if lua_menu.checkboxes[k] )
+        if lua_menu.checkboxes[k] then
             ui.set(lua_menu.checkboxes[k], v)
         end
     end
 
     for k, v in pairs(config_data.misc or {}) do
-        if lua_menu.checkboxes[k] )
+        if lua_menu.checkboxes[k] then
             ui.set(lua_menu.checkboxes[k], v)
         end
     end
@@ -1260,7 +1260,7 @@ local function import_config(base64_data)
     for _, state_name in ipairs(states) do
         local state_config = config_data.aa and config_data.aa[state_name] or {}
 
-        if state_name ~= "Global" and state_config.allow ~= nil )
+        if state_name ~= "Global" and state_config.allow ~= nil then
             ui.set(lua_menu.aa[state_name].allow, state_config.allow)
         end
 
@@ -1273,7 +1273,7 @@ local function import_config(base64_data)
         }
 
         for _, element in ipairs(ui_elements) do
-            if state_config[element] ~= nil and lua_menu.aa[state_name][element] )
+            if state_config[element] ~= nil and lua_menu.aa[state_name][element] then
                 ui.set(lua_menu.aa[state_name][element], state_config[element])
             end
         end
@@ -1305,8 +1305,8 @@ local function entity_has_c4(ent)
 end
 
 local function aa_on_use(cmd)
-	if ui.get(lua_menu.discloser.legit_aa) )
-        if cmd.in_use == 1 )
+	if ui.get(lua_menu.discloser.legit_aa) then
+        if cmd.in_use == 1 then
             ui.set(ref.pitch[1], "Off")
             ui.set(ref.yaw_base, "Local view")
             ui.set(ref.yaw[1], "180")
@@ -1323,7 +1323,7 @@ local function aa_on_use(cmd)
 		local bomb = entity.get_all("CPlantedC4")[1]
 		local bomb_x, bomb_y, bomb_z = entity.get_prop(bomb, "m_vecOrigin")
 
-		if bomb_x ~= nil )
+		if bomb_x ~= nil then
 			local player_x, player_y, player_z = entity.get_prop(plocal, "m_vecOrigin")
 			distance = distance3d(bomb_x, bomb_y, bomb_z, player_x, player_y, player_z)
 		end
@@ -1352,12 +1352,12 @@ local function aa_on_use(cmd)
 		local using = true
 
 		for i=0, #classnames do
-			if entity.get_classname(entindex) == classnames[i] )
+			if entity.get_classname(entindex) == classnames[i] then
 				using = false
 			end
 		end
 
-		if not using and not trynna_plant and not defusing )
+		if not using and not trynna_plant and not defusing then
 			cmd.in_use = 0
 		end
 	end
@@ -1379,7 +1379,7 @@ local function check_revolver_distance3d(player, victim)
 	local player_x, player_y, player_z = entity.get_origin(player)
 	local victim_x, victim_y, victim_z = entity.get_origin(victim)
 
-	if player_x == nil or victim_x == nil )
+	if player_x == nil or victim_x == nil then
 		return 0
 	end
 
@@ -1387,13 +1387,13 @@ local function check_revolver_distance3d(player, victim)
 	local no_kevlar = entity.get_prop(victim, "m_ArmorValue") == 0
 	local height_difference = player_z - victim_z
 
-	if height_difference > 100 and units < 300 )
+	if height_difference > 100 and units < 300 then
 		return "DMG+"
-	elseif units > 585 )
+	elseif units > 585 then
 		return "DMG-"
-	elseif units < 585 and units > 511 )
+	elseif units < 585 and units > 511 then
 		return "DMG"
-	elseif units <= 511 and no_kevlar )
+	elseif units <= 511 and no_kevlar then
 		return "DMG+"
 	else
 		return "DMG"
@@ -1403,7 +1403,7 @@ end
 local function draw_status(player, status)
 	local x1, y1, x2, y2, alpha_multiplier = entity.get_bounding_box(player)
 
-	if x1 == nil or alpha_multiplier == 0 )
+	if x1 == nil or alpha_multiplier == 0 then
 		return
 	end
 	
@@ -1411,9 +1411,9 @@ local function draw_status(player, status)
 	local y_position = y1 - 20
 
 	local color = {255, 0, 0}
-	if status == "DMG" )
+	if status == "DMG" then
 		color = {255, 255, 0}
-	elseif status == "DMG+" )
+	elseif status == "DMG+" then
 		color = {50, 205, 50}
 	end
 
@@ -1427,13 +1427,13 @@ local function rev_helper()
     if lp == nil or not entity.is_alive(lp) then return end
    
     local weapon = entity.get_prop(lp, "m_hActiveWeapon")
-    if weapon == nil or not is_revolver(weapon) )
+    if weapon == nil or not is_revolver(weapon) then
         return
     end
     
     -- Use filtered enemies and limit to 3 closest for performance
     local players = get_enemies_filtered()
-    if #players == 0 )
+    if #players == 0 then
         return
     end
     
@@ -1443,7 +1443,7 @@ local function rev_helper()
     for i = 1, #players do
         local ent = players[i]
         local ent_pos = { entity.get_origin(ent) }
-        if ent_pos[1] )
+        if ent_pos[1] then
             local dist = math.sqrt((ent_pos[1] - lp_pos[1])^2 + (ent_pos[2] - lp_pos[2])^2 + (ent_pos[3] - lp_pos[3])^2)
             table.insert(sorted_players, { ent = ent, dist = dist })
         end
@@ -1454,7 +1454,7 @@ local function rev_helper()
     for i = 1, math.min(3, #sorted_players) do
         local entindex = sorted_players[i].ent
         local status = check_revolver_distance3d(lp, entindex)
-        if status ~= 0 )
+        if status ~= 0 then
             draw_status(entindex, status)
         end
     end
@@ -1466,7 +1466,7 @@ end
 local function animfix_setup()
     local animfix_values = ui.get(lua_menu.checkboxes.animfix)
     local self = entity.get_local_player()
-    if not self or not entity.is_alive(self) )
+    if not self or not entity.is_alive(self) then
         return
     end
 
@@ -1474,41 +1474,41 @@ local function animfix_setup()
     local self_anim_state = self_index:get_anim_state()
 
 
-    if not self_anim_state )
+    if not self_anim_state then
         return
     end
 
-    if contains(animfix_values, "Body lean") )
+    if contains(animfix_values, "Body lean") then
         local self_anim_overlay = self_index:get_anim_overlay(12)
-        if not self_anim_overlay )
+        if not self_anim_overlay then
             return
         end
         local x_velocity = entity.get_prop(self, "m_vecVelocity[0]")
-        if math.abs(x_velocity) >= 3 )
+        if math.abs(x_velocity) >= 3 then
             self_anim_overlay.weight = 1
         end
     end
 
-    if contains(animfix_values, "Jitter legs on ground") and is_on_ground )
+    if contains(animfix_values, "Jitter legs on ground") and is_on_ground then
         ui.set(ui.reference("AA", "other", "leg movement"), command_number % 3 == 0 and "Off" or "Always slide")
         entity.set_prop(self, "m_flPoseParameter", 1, globals.tickcount() % 4 > 1 and 5 / 10 or 1)
 
     end
 
-    if contains(animfix_values, "Static in Air") and not is_on_ground )
+    if contains(animfix_values, "Static in Air") and not is_on_ground then
         entity.set_prop(self, "m_flPoseParameter", 1 , 6)
 
     end
 
-    if contains(animfix_values, "Kangaroo") )
+    if contains(animfix_values, "Kangaroo") then
         entity.set_prop(self, "m_flPoseParameter", math.random(0, 10)/10, 3)
         entity.set_prop(self, "m_flPoseParameter", math.random(0, 10)/10, 7)
         entity.set_prop(self, "m_flPoseParameter", math.random(0, 10)/10, 6)
 
     end
 
-    if contains(animfix_values, "0 pitch on landing") )
-        if not self_anim_state.hit_in_ground_animation or not is_on_ground )
+    if contains(animfix_values, "0 pitch on landing") then
+        if not self_anim_state.hit_in_ground_animation or not is_on_ground then
             return
         end
 
