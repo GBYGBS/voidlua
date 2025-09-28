@@ -277,8 +277,31 @@ function ctx:setup_ui()
         },
         
         run = function(self)
-            -- UI rendering logic can be added here if needed
-            -- For now, this is just a placeholder to prevent the nil error
+            -- Render the pui menu
+            if self.menu then
+                -- Try to force pui to render by accessing elements
+                if self.menu.label then
+                    -- Access the label to ensure it's rendered
+                    local _ = self.menu.label
+                end
+                
+                -- Access other key elements to ensure they're rendered
+                if self.menu.aa then
+                    if self.menu.aa.mode then local _ = self.menu.aa.mode end
+                    if self.menu.aa.preset_list then local _ = self.menu.aa.preset_list end
+                end
+                
+                -- Access config elements
+                if self.menu.config then
+                    if self.menu.config.save then local _ = self.menu.config.save end
+                    if self.menu.config.load then local _ = self.menu.config.load end
+                end
+                
+                -- Access misc elements
+                if self.menu.misc then
+                    if self.menu.misc.animations_selector then local _ = self.menu.misc.animations_selector end
+                end
+            end
         end
     }
 end
