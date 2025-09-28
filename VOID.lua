@@ -1534,12 +1534,12 @@ function ctx:setup_visuals()
             
             for _, player in ipairs(players) do
                 if not entity.is_alive(player) then
-                    continue
+                    goto continue
                 end
                 
                 local x, y, w, h = entity.get_bounding_box(player)
                 if not x then
-                    continue
+                    goto continue
                 end
                 
                 local color = self.ui.menu.visuals.color()
@@ -1559,6 +1559,7 @@ function ctx:setup_visuals()
                     local health_color = health > 50 and {255, 255, 0, 255} or {255, 0, 0, 255}
                     renderer.text(x - 5, y, health_color[1], health_color[2], health_color[3], health_color[4], 'r', 0, tostring(health))
                 end
+                ::continue::
             end
         end
     }
