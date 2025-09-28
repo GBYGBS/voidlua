@@ -147,61 +147,64 @@ function ctx:shutdown()
 end
 
 function ctx:setup_ui()
+    -- Create pui group for the menu
+    local ui_group = pui.group("LUA", "A", "VOID")
+    
     self.ui = {
         menu = {
-            label = pui.new("label", "[V O I D]"),
+            label = ui_group:label("[V O I D]"),
             
             -- Anti-aim section
             aa = {
-                mode = pui.new("combobox", "Mode", {"builder", "preset"}),
-                preset_list = pui.new("combobox", "Preset", {"Preset 1", "Preset 2"}),
+                mode = ui_group:combobox("Mode", {"builder", "preset"}),
+                preset_list = ui_group:combobox("Preset", {"Preset 1", "Preset 2"}),
                 states = {
                     t = {
                         global = {
-                            enable = pui.new("checkbox", "Enable"),
-                            yaw_base = pui.new("combobox", "Yaw base", {"local view", "at targets", "away", "backwards"}),
-                            yaw = pui.new("slider", "Yaw", -180, 180, 0),
-                            yaw_jitter = pui.new("combobox", "Yaw jitter", {"off", "offset", "center", "random", "skitter"}),
-                            yaw_jitter_add = pui.new("slider", "Yaw jitter add", 0, 180, 0),
-                            body_yaw = pui.new("combobox", "Body yaw", {"off", "opposite", "sides", "jitter", "static", "hold yaw"}),
-                            body_yaw_add = pui.new("slider", "Body yaw add", -180, 180, 0),
-                            body_yaw_side = pui.new("combobox", "Body yaw side", {"left", "right", "auto"}),
-                            options = pui.new("multiselect", "Options", {"anti-backstab", "safe head (lc)", "force lag", "defensive yaw", "air tick", "customize defensive"}),
-                            defensive_conditions = pui.new("multiselect", "Defensive conditions", {"always", "on weapon switch", "on reload", "on hittable", "on dormant peek", "on freestand"}),
-                            defensive_yaw = pui.new("checkbox", "Defensive yaw"),
-                            defensive_yaw_mode = pui.new("combobox", "Defensive yaw mode", {"default", "custom spin"}),
-                            defensive_freestand = pui.new("checkbox", "Defensive freestand"),
-                            defensive_pitch_mode = pui.new("combobox", "Defensive pitch mode", {"up", "zero", "ambani"}),
-                            defensive_builder = pui.new("combobox", "Defensive builder", {"default", "defensive"}),
-                            jitter_delay = pui.new("slider", "Jitter delay", 1, 4, 1),
-                            hold_time = pui.new("slider", "Hold time", 1, 10, 2),
-                            hold_delay = pui.new("slider", "Hold delay", 1, 30, 2),
-                            yaw_add = pui.new("slider", "Yaw add", -180, 180, 0),
-                            yaw_add_r = pui.new("slider", "Yaw add right", -180, 180, 0)
+                            enable = ui_group:checkbox( "Enable"),
+                            yaw_base = ui_group:combobox( "Yaw base", {"local view", "at targets", "away", "backwards"}),
+                            yaw = ui_group:slider( "Yaw", -180, 180, 0),
+                            yaw_jitter = ui_group:combobox( "Yaw jitter", {"off", "offset", "center", "random", "skitter"}),
+                            yaw_jitter_add = ui_group:slider( "Yaw jitter add", 0, 180, 0),
+                            body_yaw = ui_group:combobox( "Body yaw", {"off", "opposite", "sides", "jitter", "static", "hold yaw"}),
+                            body_yaw_add = ui_group:slider( "Body yaw add", -180, 180, 0),
+                            body_yaw_side = ui_group:combobox( "Body yaw side", {"left", "right", "auto"}),
+                            options = ui_group:multiselect( "Options", {"anti-backstab", "safe head (lc)", "force lag", "defensive yaw", "air tick", "customize defensive"}),
+                            defensive_conditions = ui_group:multiselect( "Defensive conditions", {"always", "on weapon switch", "on reload", "on hittable", "on dormant peek", "on freestand"}),
+                            defensive_yaw = ui_group:checkbox( "Defensive yaw"),
+                            defensive_yaw_mode = ui_group:combobox( "Defensive yaw mode", {"default", "custom spin"}),
+                            defensive_freestand = ui_group:checkbox( "Defensive freestand"),
+                            defensive_pitch_mode = ui_group:combobox( "Defensive pitch mode", {"up", "zero", "ambani"}),
+                            defensive_builder = ui_group:combobox( "Defensive builder", {"default", "defensive"}),
+                            jitter_delay = ui_group:slider( "Jitter delay", 1, 4, 1),
+                            hold_time = ui_group:slider( "Hold time", 1, 10, 2),
+                            hold_delay = ui_group:slider( "Hold delay", 1, 30, 2),
+                            yaw_add = ui_group:slider( "Yaw add", -180, 180, 0),
+                            yaw_add_r = ui_group:slider( "Yaw add right", -180, 180, 0)
                         }
                     },
                     ct = {
                         global = {
-                            enable = pui.new("checkbox", "Enable"),
-                            yaw_base = pui.new("combobox", "Yaw base", {"local view", "at targets", "away", "backwards"}),
-                            yaw = pui.new("slider", "Yaw", -180, 180, 0),
-                            yaw_jitter = pui.new("combobox", "Yaw jitter", {"off", "offset", "center", "random", "skitter"}),
-                            yaw_jitter_add = pui.new("slider", "Yaw jitter add", 0, 180, 0),
-                            body_yaw = pui.new("combobox", "Body yaw", {"off", "opposite", "sides", "jitter", "static", "hold yaw"}),
-                            body_yaw_add = pui.new("slider", "Body yaw add", -180, 180, 0),
-                            body_yaw_side = pui.new("combobox", "Body yaw side", {"left", "right", "auto"}),
-                            options = pui.new("multiselect", "Options", {"anti-backstab", "safe head (lc)", "force lag", "defensive yaw", "air tick", "customize defensive"}),
-                            defensive_conditions = pui.new("multiselect", "Defensive conditions", {"always", "on weapon switch", "on reload", "on hittable", "on dormant peek", "on freestand"}),
-                            defensive_yaw = pui.new("checkbox", "Defensive yaw"),
-                            defensive_yaw_mode = pui.new("combobox", "Defensive yaw mode", {"default", "custom spin"}),
-                            defensive_freestand = pui.new("checkbox", "Defensive freestand"),
-                            defensive_pitch_mode = pui.new("combobox", "Defensive pitch mode", {"up", "zero", "ambani"}),
-                            defensive_builder = pui.new("combobox", "Defensive builder", {"default", "defensive"}),
-                            jitter_delay = pui.new("slider", "Jitter delay", 1, 4, 1),
-                            hold_time = pui.new("slider", "Hold time", 1, 10, 2),
-                            hold_delay = pui.new("slider", "Hold delay", 1, 30, 2),
-                            yaw_add = pui.new("slider", "Yaw add", -180, 180, 0),
-                            yaw_add_r = pui.new("slider", "Yaw add right", -180, 180, 0)
+                            enable = ui_group:checkbox( "Enable"),
+                            yaw_base = ui_group:combobox( "Yaw base", {"local view", "at targets", "away", "backwards"}),
+                            yaw = ui_group:slider( "Yaw", -180, 180, 0),
+                            yaw_jitter = ui_group:combobox( "Yaw jitter", {"off", "offset", "center", "random", "skitter"}),
+                            yaw_jitter_add = ui_group:slider( "Yaw jitter add", 0, 180, 0),
+                            body_yaw = ui_group:combobox( "Body yaw", {"off", "opposite", "sides", "jitter", "static", "hold yaw"}),
+                            body_yaw_add = ui_group:slider( "Body yaw add", -180, 180, 0),
+                            body_yaw_side = ui_group:combobox( "Body yaw side", {"left", "right", "auto"}),
+                            options = ui_group:multiselect( "Options", {"anti-backstab", "safe head (lc)", "force lag", "defensive yaw", "air tick", "customize defensive"}),
+                            defensive_conditions = ui_group:multiselect( "Defensive conditions", {"always", "on weapon switch", "on reload", "on hittable", "on dormant peek", "on freestand"}),
+                            defensive_yaw = ui_group:checkbox( "Defensive yaw"),
+                            defensive_yaw_mode = ui_group:combobox( "Defensive yaw mode", {"default", "custom spin"}),
+                            defensive_freestand = ui_group:checkbox( "Defensive freestand"),
+                            defensive_pitch_mode = ui_group:combobox( "Defensive pitch mode", {"up", "zero", "ambani"}),
+                            defensive_builder = ui_group:combobox( "Defensive builder", {"default", "defensive"}),
+                            jitter_delay = ui_group:slider( "Jitter delay", 1, 4, 1),
+                            hold_time = ui_group:slider( "Hold time", 1, 10, 2),
+                            hold_delay = ui_group:slider( "Hold delay", 1, 30, 2),
+                            yaw_add = ui_group:slider( "Yaw add", -180, 180, 0),
+                            yaw_add_r = ui_group:slider( "Yaw add right", -180, 180, 0)
                         }
                     }
                 }
@@ -209,13 +212,13 @@ function ctx:setup_ui()
             
             -- Misc section
             misc = {
-                resolver = pui.new("checkbox", "Resolver"),
-                resolver_flag = pui.new("checkbox", "Resolver flag"),
-                jitter_helper = pui.new("checkbox", "Jitter helper"),
-                animations_selector = pui.new("multiselect", "Animations", {"walk in air", "moon walk", "static legs"}),
-                peekbot = pui.new("checkbox", "Peekbot"),
+                resolver = ui_group:checkbox( "Resolver"),
+                resolver_flag = ui_group:checkbox( "Resolver flag"),
+                jitter_helper = ui_group:checkbox( "Jitter helper"),
+                animations_selector = ui_group:multiselect( "Animations", {"walk in air", "moon walk", "static legs"}),
+                peekbot = ui_group:checkbox( "Peekbot"),
                 freestanding = pui.new("hotkey", "Freestanding"),
-                freestanding_disablers = pui.new("multiselect", "Freestanding disablers", {"stand", "run", "duck", "duck move", "jump", "duck jump", "slow walk", "hideshots"}),
+                freestanding_disablers = ui_group:multiselect( "Freestanding disablers", {"stand", "run", "duck", "duck move", "jump", "duck jump", "slow walk", "hideshots"}),
                 edge_yaw = pui.new("hotkey", "Edge yaw"),
                 manual_left = pui.new("hotkey", "Manual left"),
                 manual_right = pui.new("hotkey", "Manual right"),
@@ -224,84 +227,61 @@ function ctx:setup_ui()
             
             -- Visuals section
             visuals = {
-                enable = pui.new("checkbox", "Enable"),
-                box = pui.new("checkbox", "Box"),
-                name = pui.new("checkbox", "Name"),
-                health = pui.new("checkbox", "Health"),
-                color = pui.new("color_picker", "Color", 255, 255, 255, 255)
+                enable = ui_group:checkbox( "Enable"),
+                box = ui_group:checkbox( "Box"),
+                name = ui_group:checkbox( "Name"),
+                health = ui_group:checkbox( "Health"),
+                color = ui_group:color_picker( "Color", 255, 255, 255, 255)
             },
             
             -- Config section
             cfg = {
-                name = pui.new("textbox", "Config name"),
-                save = pui.new("button", "Save"),
-                load = pui.new("button", "Load"),
-                delete = pui.new("button", "Delete"),
-                export = pui.new("button", "Export"),
-                import = pui.new("button", "Import"),
-                list = pui.new("combobox", "Configs", {})
+                name = ui_group:textbox( "Config name"),
+                save = ui_group:button( "Save"),
+                load = ui_group:button( "Load"),
+                delete = ui_group:button( "Delete"),
+                export = ui_group:button( "Export"),
+                import = ui_group:button( "Import"),
+                list = ui_group:combobox( "Configs", {})
             },
             
             -- Game enhancer section
             game_enhancer = {
-                enable = pui.new("checkbox", "Enable"),
-                boost = pui.new("combobox", "Boost", {"Low", "Medium", "High", "Ultra"})
+                enable = ui_group:checkbox( "Enable"),
+                boost = ui_group:combobox( "Boost", {"Low", "Medium", "High", "Ultra"})
             },
             
             -- Aim punch fix section
             aim_punch_fix = {
-                enable = pui.new("checkbox", "Enable")
+                enable = ui_group:checkbox( "Enable")
             },
             
             -- Secret exploit section
             secret_exploit = {
-                enable = pui.new("checkbox", "Enable")
+                enable = ui_group:checkbox( "Enable")
             },
             
             -- Watermark section
             watermark = {
-                enable = pui.new("checkbox", "Enable"),
-                logo = pui.new("checkbox", "Logo"),
-                custom_text = pui.new("checkbox", "Custom text"),
-                fps = pui.new("checkbox", "FPS"),
-                ping = pui.new("checkbox", "Ping"),
-                kdr = pui.new("checkbox", "KDR"),
-                velocity = pui.new("checkbox", "Velocity"),
-                server_framerate = pui.new("checkbox", "Server framerate"),
-                server_info = pui.new("checkbox", "Server info"),
-                tickrate = pui.new("checkbox", "Tickrate"),
-                time = pui.new("checkbox", "Time"),
-                gradient = pui.new("checkbox", "Gradient header"),
-                color = pui.new("color_picker", "Color", 255, 255, 255, 255)
+                enable = ui_group:checkbox( "Enable"),
+                logo = ui_group:checkbox( "Logo"),
+                custom_text = ui_group:checkbox( "Custom text"),
+                fps = ui_group:checkbox( "FPS"),
+                ping = ui_group:checkbox( "Ping"),
+                kdr = ui_group:checkbox( "KDR"),
+                velocity = ui_group:checkbox( "Velocity"),
+                server_framerate = ui_group:checkbox( "Server framerate"),
+                server_info = ui_group:checkbox( "Server info"),
+                tickrate = ui_group:checkbox( "Tickrate"),
+                time = ui_group:checkbox( "Time"),
+                gradient = ui_group:checkbox( "Gradient header"),
+                color = ui_group:color_picker( "Color", 255, 255, 255, 255)
             }
         },
         
         run = function(self)
-            -- Render the pui menu
-            if self.menu then
-                -- Try to force pui to render by accessing elements
-                if self.menu.label then
-                    -- Access the label to ensure it's rendered
-                    local _ = self.menu.label
-                end
-                
-                -- Access other key elements to ensure they're rendered
-                if self.menu.aa then
-                    if self.menu.aa.mode then local _ = self.menu.aa.mode end
-                    if self.menu.aa.preset_list then local _ = self.menu.aa.preset_list end
-                end
-                
-                -- Access config elements
-                if self.menu.config then
-                    if self.menu.config.save then local _ = self.menu.config.save end
-                    if self.menu.config.load then local _ = self.menu.config.load end
-                end
-                
-                -- Access misc elements
-                if self.menu.misc then
-                    if self.menu.misc.animations_selector then local _ = self.menu.misc.animations_selector end
-                end
-            end
+            -- pui handles rendering automatically
+            -- No additional rendering code needed
         end
     }
 end
