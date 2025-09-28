@@ -274,7 +274,12 @@ function ctx:setup_ui()
                 gradient = pui.new("checkbox", "Gradient header"),
                 color = pui.new("color_picker", "Color", 255, 255, 255, 255)
             }
-        }
+        },
+        
+        run = function(self)
+            -- UI rendering logic can be added here if needed
+            -- For now, this is just a placeholder to prevent the nil error
+        end
     }
 end
 
@@ -1972,55 +1977,56 @@ end
 -- Event callbacks
 client.set_event_callback('load', function()
     ctx:init()
-end)
+    
+    -- Register all other callbacks after initialization
+    client.set_event_callback('setup_command', function(cmd)
+        ctx.antiaim:run(cmd)
+        ctx.fakelag:run(cmd)
+        ctx.defensive:run(cmd)
+        ctx.predict:run(cmd)
+        ctx.peekbot:run(cmd)
+        ctx.antiaim:animations()
+        ctx.aim_punch_fix:run(cmd)
+        ctx.secret_exploit:run(cmd)
+        ctx.game_enhancer:run()
+    end)
 
-client.set_event_callback('setup_command', function(cmd)
-    ctx.antiaim:run(cmd)
-    ctx.fakelag:run(cmd)
-    ctx.defensive:run(cmd)
-    ctx.predict:run(cmd)
-    ctx.peekbot:run(cmd)
-    ctx.antiaim:animations()
-    ctx.aim_punch_fix:run(cmd)
-    ctx.secret_exploit:run(cmd)
-    ctx.game_enhancer:run()
-end)
+    client.set_event_callback('shutdown', function()
+        ctx:shutdown()
+    end)
 
-client.set_event_callback('shutdown', function()
-    ctx:shutdown()
-end)
+    client.set_event_callback('run_command', function(cmd)
+        ctx.net_channel:run()
+    end)
 
-client.set_event_callback('run_command', function(cmd)
-    ctx.net_channel:run()
-end)
+    client.set_event_callback('paint', function()
+        ctx.visuals:run()
+        ctx.watermark:run()
+    end)
 
-client.set_event_callback('paint', function()
-    ctx.visuals:run()
-    ctx.watermark:run()
-end)
+    client.set_event_callback('paint_ui', function()
+        ctx.ui:run()
+    end)
 
-client.set_event_callback('paint_ui', function()
-    ctx.ui:run()
-end)
+    client.set_event_callback('pre_render', function()
+        ctx.antiaim:airtick()
+    end)
 
-client.set_event_callback('pre_render', function()
-    ctx.antiaim:airtick()
-end)
+    client.set_event_callback('predict_command', function(cmd)
+        ctx.resolver:jitterhelper()
+    end)
 
-client.set_event_callback('predict_command', function(cmd)
-    ctx.resolver:jitterhelper()
-end)
+    client.set_event_callback('level_init', function()
+        ctx.globals.resolver_data = {}
+    end)
 
-client.set_event_callback('level_init', function()
-    ctx.globals.resolver_data = {}
-end)
+    client.set_event_callback('net_update_start', function()
+        ctx.resolver:jitterhelper()
+    end)
 
-client.set_event_callback('net_update_start', function()
-    ctx.resolver:jitterhelper()
-end)
-
-client.set_event_callback('net_update_end', function()
-    ctx.resolver:jitterhelper()
+    client.set_event_callback('net_update_end', function()
+        ctx.resolver:jitterhelper()
+    end)
 end)
 
 -- Register ESP flag for resolver
